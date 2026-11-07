@@ -1,11 +1,11 @@
-def main() -> int:
+def main():
 
     entrada_tratada = []
 
     with open("entrada.txt", "r", encoding="utf-8") as arquivo:
         entrada = arquivo.read().splitlines()
 
-    print(entrada)    
+    #print(entrada)    
 
     for linha in entrada:
 
@@ -17,8 +17,13 @@ def main() -> int:
         
             entrada_tratada.append(linha_convertida)
 
-    print(entrada_tratada)
+    #print(entrada_tratada)
 
+def FCFS()-> float:
+
+def SJF() -> float:
+
+def RR() -> float:
     
 
 if __name__ == "__main__":
