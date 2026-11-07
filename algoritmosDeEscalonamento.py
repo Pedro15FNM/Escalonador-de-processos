@@ -22,34 +22,66 @@ def main():
 
     #0 é o momento de chegada, 1 é a duração, e 2 é o id
 
-    print(entrada_tratada)
-
+    print("Entrada Tratada:", entrada_tratada)
+    
+    # Chama o algoritmo e guarda o resultado
+    resultado_sjf = SJF(entrada_tratada)
+    
+    print("")
+    # Imprime a simulação instante por instante
+    print("Simulação SJF:", resultado_sjf)
 
 
 def FCFS()-> float:
 
     return 0
 
-def SJF(entrada_tratada: list[float]) -> float:
-    lista_novos, lista_prontos, retorno = []
-    duracao_total = 0
-    shortest = -1
+def SJF(entrada_tratada: list[float]) -> list[list[float]]:
 
-    #calcula tempo total de duração
-    for i in entrada_tratada:
-        duracao_total += entrada_tratada[i][1]
-    
+    lista_prontos = [] #processos prontos para executar
+    retorno = [] 
+    instante = 0
+    cont = 0
+
+    lista_novos = entrada_tratada.copy() #processos esperando para estarem prontos de inicio são todos
+
     #simula cada instante do processamento(talvez não seja a ideia mais eficiente mas foi a que eu tive)
-    for instante in range (duracao_total) :
-        lista_prontos, lista_novos = atualizaProntos(lista_prontos, entrada_tratada, lista_novos)
+    while cont > 0 or len(lista_novos) > 0 or len(lista_prontos) > 0:
+        cont -= 1
 
-        for j in lista_prontos:
-            if lista_prontos[j][1]>shortest or shortest==-1:
-                shortest = lista_prontos[j][1]
-            retorno.append([instante][lista_prontos[j][2]])
+        #pula a troca de processo se já tiver um processo em andamento
+        if cont <= 0:
+            
+            #adiciona prontos e remove prontos dos novos
+            for w in lista_novos.copy():
+                if w[0]<=instante:
+                    lista_prontos.append(w)
+                    lista_novos.remove(w)
+            
+            #se não tem ninguem pronto pula a iteração
+            if not lista_prontos:
+                instante+=1
+                continue
 
+            shortest = [0, -1, -1] #como vamos ter que escolher o shortest job temos que resetar essa variavel logo antes(colocar em outros trechos do código gera problemas, é importante que ela resete logo antes de procurar um novo)
 
-    return 0
+            #escolhe quem é o shortest job
+            for j in lista_prontos:
+                if j[1]<shortest[1] or shortest[1]==-1:
+                    shortest = j
+
+            #adiciona o job escolhido no retorno junto com o instante no qual ele foi escolhido
+            retorno.append([instante, shortest[2]])
+            lista_prontos.remove(shortest) #retira ele da lista de prontos para não ser chamado novamente
+            cont=shortest[1]
+            
+
+        else:
+            retorno.append([instante, shortest[2]])
+        
+        instante+=1
+
+    return retorno
 
 def RR() -> float:
     
@@ -63,9 +95,6 @@ def respostaMedio()-> float:
 
 def esperaMedio()-> float:
     return 0
-
-def atualizaProntos() -> list[list[float]], list[list[float]]
-    return [[0]], [[0]]
 
 
 
