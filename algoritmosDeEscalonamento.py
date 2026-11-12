@@ -111,6 +111,11 @@ def FCFS(entrada_tratada: list[list[float]]):
         lista_espera.append(lista_retorno[cont] - i["duração"])
         cont += 1
 
+    # Calcular médias
+    retorno_medio = sum(lista_retorno) / len(lista_retorno)
+    resposta_medio = sum(lista_resposta) / len(lista_resposta)
+    espera_medio = sum(lista_espera) / len(lista_espera)
+
 
 def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
 
