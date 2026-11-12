@@ -96,6 +96,21 @@ def FCFS(entrada_tratada: list[list[float]]):
 
     dicionario_processos = extrair_informacoes(entrada_tratada)
 
+    # Calcular lista do "tempo de retorno"
+    lista_retorno = []
+    for _, i in dicionario_processos.items():
+        lista_retorno.append(i["conclusao"] - i["chegada"])
+    # Calcular lista do "tempo de resposta"
+    lista_resposta = []
+    for _, i in dicionario_processos.items():
+        lista_resposta.append(i["1 execução"] - i["chegada"])
+    # Calcular lista do "tempo de espera"
+    lista_espera = []
+    cont = 0
+    for _, i in dicionario_processos.items():
+        lista_espera.append(lista_retorno[cont] - i["duração"])
+        cont += 1
+
 
 def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
 
