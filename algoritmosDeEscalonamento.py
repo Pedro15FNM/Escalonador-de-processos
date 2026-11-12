@@ -32,6 +32,8 @@ def main():
 
     resultado_fcfs = FCFS(entrada_tratada)
 
+    print()
+
 
 def FCFS(entrada_tratada: list[list[float]]):
 
@@ -44,9 +46,9 @@ def FCFS(entrada_tratada: list[list[float]]):
         Separei todas essas informações em um dicionário simples, já que as mesmas são as mais fundamentais para calcular o tempo de retorno, resposta e espera.
 
         Já para calcular os valores usando o FCFS, utilizei a seguinte ideia:
-        Como a lista entrege será uma lista com listas contendo três valores fluttuantes (tempo de chegada, tempo de duração ou de pico e o id de processo), já posso elminar o id do processo sua chegada e duração.
-        Já para a conclusão, criei uma variável responsável por medir todo o tempo percorrido até o momento, ela começa com o valor zero e antes de ser atribuida a chave "conclusão" do dicionário, é somado ao tempo de execução atual do processo. A lógica é que, se o processo está sendo executado agora, ele só irá ser concluido quando seu tempo de pico terminar, se eu estiver somando o tempo de pico de cada processo e somar mais esse processo, terei o exato instante na linha do tempo em que o processo terminou levando em consideração todos os demais processo, para o caso inicial o valor será apenas o seu tempo de pico, já que zero mais seu tempo de exeução é justamente o tempo em que concluiu.
-        Para o tempo de primeira execução, percebi que se utilizar o tempo percorrido antes de soma-lo com o tempo de pico, vou obter o tempo exato em que o processo está executando no momento depois dos processos passados, logo tenho sua primeira execução a independente do valor de sua chegada.
+        Como a lista entrege será uma lista com listas contendo três valores flutuantes (tempo de chegada, tempo de duração ou de pico e o id de processo), já posso elminar o id do processo sua chegada e duração.
+        Já para a conclusão, criei uma variável responsável por medir todo o tempo percorrido até o momento, ela começa com o valor zero e antes de ser atribuida a chave "conclusão" do dicionário, é somado ao tempo de execução atual do processo. A lógica é que, se o processo está sendo executado agora, ele só irá ser concluido quando seu tempo de pico terminar. Entretanto, se o processo tiver seu tempo de chegada depois do tempo percorrido atual, quer dizer que teremos algum tempo ocioso onde nenhum processo será executado, logicamente, somar a duração com o tempo percorrido atual não funciona nesse caso. Para contornar isso usamos um if para verificar se o tempo de chegada do processo é menor que o tempo percorrido até o momento. Se for menor, executamos o algorimto já descrito, se não, então somamos normalmente o seu tempo de execução mais a diferença entre o tempo percorrido até o tempo de chegada do processo atual.
+        Para o tempo de primeira execução, percebi que se utilizar o tempo percorrido antes de soma-lo com o tempo de pico, vou obter o tempo exato em que o processo começa executando logo depois dos processos passados. Mas, isso somente se o tempo de chegada do processo for menor ou igual ao tempo percorrido até o momento, se não, logo o tempo de chegada está a frente do tempo percorrido, o que faz com que o seu tempo de primeira execução seja igual ao seu tempo de chegada.
         """
         dicionario_processos = {}  # Dicionário onde os valores mais importantes de cada processo serão salvos da seguinte forma:
         """
@@ -115,6 +117,11 @@ def FCFS(entrada_tratada: list[list[float]]):
     retorno_medio = sum(lista_retorno) / len(lista_retorno)
     resposta_medio = sum(lista_resposta) / len(lista_resposta)
     espera_medio = sum(lista_espera) / len(lista_espera)
+
+    # Finalmente atribuir a lista pronta.
+    lista_pronta.extend([retorno_medio, resposta_medio, espera_medio])
+
+    return lista_pronta
 
 
 def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
