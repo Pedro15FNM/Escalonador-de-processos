@@ -33,7 +33,11 @@ def main():
     resultado_fcfs = FCFS(entrada_tratada)
 
     resultado_rr = RR(entrada_tratada, 2)
-    print("\n", resultado_rr)
+
+    media_rr = Media(resultado_rr)
+
+    print(media_rr)
+
 
 def FCFS(entrada_tratada: list[list[float]]):
 
@@ -284,17 +288,23 @@ def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
 
     return lista_prontos
 
+def Media(lista_prontos: list[list[float]]):
+    retorno_soma = 0
+    resposta_soma = 0
+    espera_soma = 0
 
-def retornoMedio() -> float:
-    return 0
+    for i in lista_prontos:
+        retorno_soma += i[0]
+        resposta_soma += i[1]
+        espera_soma += i[2]
 
+    retorno_medio = retorno_soma / len(lista_prontos)
+    resposta_medio = resposta_soma / len(lista_prontos)
+    espera_medio = espera_soma / len(lista_prontos)
 
-def respostaMedio() -> float:
-    return 0
+    lista_medias = [retorno_medio, resposta_medio, espera_medio]
 
-
-def esperaMedio() -> float:
-    return 0
+    return lista_medias
 
 
 if __name__ == "__main__":
