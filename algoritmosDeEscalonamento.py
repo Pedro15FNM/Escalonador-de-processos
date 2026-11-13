@@ -32,11 +32,14 @@ def main():
 
     resultado_fcfs = FCFS(entrada_tratada)
 
-    resultado_rr = RR(entrada_tratada, 2)
+    resultado_rr = RR(entrada_tratada, quantum=2)
 
     media_rr = Media(resultado_rr)
 
+    media_fcfs = Media(resultado_fcfs)
+
     print(media_rr)
+    print(media_fcfs)
 
 
 def FCFS(entrada_tratada: list[list[float]]):
@@ -101,30 +104,15 @@ def FCFS(entrada_tratada: list[list[float]]):
         return dicionario_processos
 
     dicionario_processos = extrair_informacoes(entrada_tratada)
-
-    # Calcular lista do "tempo de retorno"
-    lista_retorno = []
-    for _, i in dicionario_processos.items():
-        lista_retorno.append(i["conclusao"] - i["chegada"])
-    # Calcular lista do "tempo de resposta"
-    lista_resposta = []
-    for _, i in dicionario_processos.items():
-        lista_resposta.append(i["1 execucao"] - i["chegada"])
-    # Calcular lista do "tempo de espera"
-    lista_espera = []
-    cont = 0
-    for _, i in dicionario_processos.items():
-        lista_espera.append(lista_retorno[cont] - i["pico"])
-        cont += 1
-
-    # Calcular médias
-    retorno_medio = sum(lista_retorno) / len(lista_retorno)
-    resposta_medio = sum(lista_resposta) / len(lista_resposta)
-    espera_medio = sum(lista_espera) / len(lista_espera)
-
-    # Finalmente atribuir a lista pronta.
-    lista_pronta.extend([retorno_medio, resposta_medio, espera_medio])
-
+    
+     # === CALCULAR RETORNO, RESPOSTA E ESPERA === #
+    dicionario_processos = extrair_informacoes(entrada_tratada)
+    for i in dicionario_processos.values():
+        retorno = i["conclusao"] - i["chegada"]
+        resposta = i["1 execucao"] - i["chegada"]
+        espera = retorno - i["pico"]
+        lista_pronta.append([retorno, resposta, espera])
+    
     return lista_pronta
 
 
@@ -288,7 +276,7 @@ def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
 
     return lista_prontos
 
-def Media(lista_prontos: list[list[float]]):
+def Media(lista_prontos: list[list[float]]) -> list[float]:
     retorno_soma = 0
     resposta_soma = 0
     espera_soma = 0
