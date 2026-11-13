@@ -32,6 +32,8 @@ def main():
 
     resultado_fcfs = FCFS(entrada_tratada)
 
+    resultado_rr = RR(entrada_tratada)
+
     print()
 
 
@@ -178,9 +180,108 @@ def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
     return retorno
 
 
-def RR() -> float:
+def RR(entrada_tratada) -> float:
+    lista_prontos = []  # processos prontos para executar
 
-    return 0
+    def extrair_informacoes(entrada_tratada, quantum):
+        dicionario_processos = {}
+        tempo_percorrido = 0
+        primeira_exec = 0
+        conclusao = 0
+
+        dicionario_pico_processos = {}  # Foi a forma que encontrei para guardar os processos que já foram executados, nem que fosse um quantum. A fim de salvar o seu tenmpo de pico.
+
+        tem_processo = True
+
+        while tem_processo:
+            
+            # Crio uma flag para saber se a CPU ficou ociosa (sem nenhum processo para executar) nesta rodada.
+            processo_executado = False
+
+            for i in entrada_tratada:
+                
+                # === CRITÉRIOS DE AVALIAÇÃO DO PROCESSO === #
+                # Se tempo de chegada do processo for maior que o tempo percorrido, logo o processo não chegou ainda. Então pule para o próximo.
+                if i[0] > tempo_percorrido:
+                    continue
+
+                # Se valor do tempo de pico do processo for igual a 0, então o processo já foi executado.
+                if i[1] == 0:
+                    continue
+
+                # Se passou pelos critérios de avaliação do processo, logo tivemos processos executando nesta rodada.
+                processo_executado = True
+
+                # === SALVAR PICO DO PROCESSO ANTES DE EXECUTA-LO ===
+                # Se o processo ainda não passou pelo hardware, então adicione ele a lista de processos passados
+                if i[2] not in dicionario_pico_processos:
+                    dicionario_pico_processos.update({i[2]: i[1]})
+
+                # Atribuia a pico valor do pico do processo atual
+                pico = dicionario_pico_processos[i[2]]
+
+
+                # === APLICAR O QUANTUM AOS PROCESSOS === #
+                # Se já existe, resgata o valor original para não ser sobrescrito pelo de outro processo
+                if  f"Processo {i[2]}" not in dicionario_processos:
+                    primeira_exec = tempo_percorrido
+                else:
+                    # Se já existe, resgata o valor original para não ser sobrescrito pelo de outro processo
+                    primeira_exec = dicionario_processos[f"Processo {i[2]}"]["1 execução"]
+
+                # Verificar se o quantum é maior que o pico do processo
+                if i[1] >= quantum:
+                    # Subtrair do tempo de pico de um quantum a o valor do quantum.
+                    i[1] -= quantum
+
+                    # E aumentar o valor do tempo percorrido a mais um quantum.
+                    tempo_percorrido += quantum
+                else:
+                    # Retirar o resto da subtração do pico do processo pelo quantum atual.
+                    resto = abs(i[1] - quantum)
+
+                    # subtrair o pico do processo atual pelo quantum, mais o resto para não ficar negativo.
+                    i[1] -= quantum + resto
+
+                    # Somando o tempo percorrido mais o quantum menos o resto pelo fato de que a CPU não pode ficar em tempo ocioso,
+                    tempo_percorrido += quantum - resto
+
+
+
+                # Conclusão sempre será igual a o tempo percorrido, mesmo que o processo não tenha acabado ainda. Pois, inevitavelmente, ele vai acabar, logo é o único valor que sempre é atualizado.
+                conclusao = tempo_percorrido
+
+                # === ATUALIZAR O DICIONÁRIO DE PROCESSOS === #
+                # Adicionar ao dicionário de processos as informações do processo atual atualizado.
+                dicionario_processos.update(
+                    {
+                        f"Processo {i[2]}": {
+                            "chegada": i[0],
+                            "1 execução": primeira_exec,
+                            "pico": pico,
+                            "conclusao": conclusao,  # Valor de conslusão sempre será atualizado para o seu novo valor até que o processo se encerre.
+                        }
+                    }
+                )
+
+            # Se o processo_executado for igual a false, logo a CPU ficou ociosa (sem nenhum processo), durante essa rodada.
+            # Então tornamos o valor de tempo_percorrido igual a o menor valor de chegaga, para caso aja algum outro processo que também não foi executado, do processo que ainda tem o seu valor de pico maior que zero.
+            if not processo_executado:
+                tempo_percorrido = min(processo[0] for processo in entrada_tratada if entrada_tratada[1] > 0)
+
+            """
+            Para veriricar se todos os processos tem o seu tempo de pico igual a zero?
+            Utilizo a função "all" em uma lista de booleanos criados através de um "for" onde cada iteração verifica se o valor "processo[1]" (que no caso é o tempo de pico de cada processo) é diferente de zero. 
+            Se o valor retornado pelo "all" for "False", logo ainda temos processos a serem executados.
+            Se o valor retornado pelo "all" for "True", logo todos os processos acabaram de ser executados.
+            Ao final atribuo a variável booleana "tem_processo" o inverso lógico do resultado. Fazendo com que se ainda ouver um processo a ser executado, o valor de "tem_processo" seja True e para quando não ouver mais processo para ser executado, o valor de "tem_processo" seja False.
+            Fazendo assim o loop principal de execução do algoritmo terminar quando todos os processos forem resolvidos.
+            """
+            tem_processo = not all(processo[1] == 0 for processo in entrada_tratada)
+
+        return dicionario_processos
+
+    print(extrair_informacoes(entrada_tratada, 2))
 
 
 def retornoMedio() -> float:
