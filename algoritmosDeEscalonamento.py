@@ -32,10 +32,8 @@ def main():
 
     resultado_fcfs = FCFS(entrada_tratada)
 
-    resultado_rr = RR(entrada_tratada)
-
-    print()
-
+    resultado_rr = RR(entrada_tratada, 2)
+    print("\n", resultado_rr)
 
 def FCFS(entrada_tratada: list[list[float]]):
 
@@ -58,13 +56,13 @@ def FCFS(entrada_tratada: list[list[float]]):
                 chegada: t_che, 
                 duração: t_dur, 
                 conlusão: t_con, 
-                1 execução: t_exe
+                1 execucao: t_exe
             },
             Processo 2: { 
                 chegada: t_che, 
                 duração: t_dur, 
                 conlusão: t_con, 
-                1 execução: t_exe
+                1 execucao: t_exe
             }
         }
         """
@@ -90,9 +88,9 @@ def FCFS(entrada_tratada: list[list[float]]):
                 {
                     f"Processo {i[2]}": {
                         "chegada": i[0],
-                        "duração": i[1],
+                        "pico": i[1],
                         "conclusao": tempo_percorrido,
-                        "1 execução": primeira_execucao,
+                        "1 execucao": primeira_execucao,
                     }
                 }
             )
@@ -107,12 +105,12 @@ def FCFS(entrada_tratada: list[list[float]]):
     # Calcular lista do "tempo de resposta"
     lista_resposta = []
     for _, i in dicionario_processos.items():
-        lista_resposta.append(i["1 execução"] - i["chegada"])
+        lista_resposta.append(i["1 execucao"] - i["chegada"])
     # Calcular lista do "tempo de espera"
     lista_espera = []
     cont = 0
     for _, i in dicionario_processos.items():
-        lista_espera.append(lista_retorno[cont] - i["duração"])
+        lista_espera.append(lista_retorno[cont] - i["pico"])
         cont += 1
 
     # Calcular médias
@@ -180,14 +178,12 @@ def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
     return retorno
 
 
-def RR(entrada_tratada) -> float:
+def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
     lista_prontos = []  # processos prontos para executar
 
     def extrair_informacoes(entrada_tratada, quantum):
         dicionario_processos = {}
         tempo_percorrido = 0
-        primeira_exec = 0
-        conclusao = 0
 
         dicionario_pico_processos = {}  # Foi a forma que encontrei para guardar os processos que já foram executados, nem que fosse um quantum. A fim de salvar o seu tenmpo de pico.
 
@@ -202,11 +198,8 @@ def RR(entrada_tratada) -> float:
                 
                 # === CRITÉRIOS DE AVALIAÇÃO DO PROCESSO === #
                 # Se tempo de chegada do processo for maior que o tempo percorrido, logo o processo não chegou ainda. Então pule para o próximo.
-                if i[0] > tempo_percorrido:
-                    continue
-
                 # Se valor do tempo de pico do processo for igual a 0, então o processo já foi executado.
-                if i[1] == 0:
+                if i[0] > tempo_percorrido or i[1] == 0:
                     continue
 
                 # Se passou pelos critérios de avaliação do processo, logo tivemos processos executando nesta rodada.
@@ -227,7 +220,7 @@ def RR(entrada_tratada) -> float:
                     primeira_exec = tempo_percorrido
                 else:
                     # Se já existe, resgata o valor original para não ser sobrescrito pelo de outro processo
-                    primeira_exec = dicionario_processos[f"Processo {i[2]}"]["1 execução"]
+                    primeira_exec = dicionario_processos[f"Processo {i[2]}"]["1 execucao"]
 
                 # Verificar se o quantum é maior que o pico do processo
                 if i[1] >= quantum:
@@ -257,7 +250,7 @@ def RR(entrada_tratada) -> float:
                     {
                         f"Processo {i[2]}": {
                             "chegada": i[0],
-                            "1 execução": primeira_exec,
+                            "1 execucao": primeira_exec,
                             "pico": pico,
                             "conclusao": conclusao,  # Valor de conslusão sempre será atualizado para o seu novo valor até que o processo se encerre.
                         }
@@ -267,7 +260,7 @@ def RR(entrada_tratada) -> float:
             # Se o processo_executado for igual a false, logo a CPU ficou ociosa (sem nenhum processo), durante essa rodada.
             # Então tornamos o valor de tempo_percorrido igual a o menor valor de chegaga, para caso aja algum outro processo que também não foi executado, do processo que ainda tem o seu valor de pico maior que zero.
             if not processo_executado:
-                tempo_percorrido = min(processo[0] for processo in entrada_tratada if entrada_tratada[1] > 0)
+                tempo_percorrido = min(processo[0] for processo in entrada_tratada if processo[1] > 0)
 
             """
             Para veriricar se todos os processos tem o seu tempo de pico igual a zero?
@@ -281,7 +274,15 @@ def RR(entrada_tratada) -> float:
 
         return dicionario_processos
 
-    print(extrair_informacoes(entrada_tratada, 2))
+    # === CALCULAR RETORNO, RESPOSTA E ESPERA === #
+    dicionario_processos = extrair_informacoes(entrada_tratada, quantum)
+    for i in dicionario_processos.values():
+        retorno = i["conclusao"] - i["chegada"]
+        resposta = i["1 execucao"] - i["chegada"]
+        espera = retorno - i["pico"]
+        lista_prontos.append([retorno, resposta, espera])
+
+    return lista_prontos
 
 
 def retornoMedio() -> float:
