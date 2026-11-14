@@ -30,7 +30,10 @@ def FCFS(entrada_tratada: list[list[float]]):
         }
         """
         tempo_percorrido = 0
-        for i in entrada_tratada:
+       
+        entrada_ordenada = sorted(entrada_tratada, key=lambda p: (p[0], p[2])) #ordena a entrada em ordem de chegada
+       
+        for i in entrada_ordenada:
             if i[0] <= tempo_percorrido:
                 primeira_execucao = tempo_percorrido  # Se o tempo de chegada do processo for menor que o tempo percorrido até o momento, logo quando o processo anterior termina, o processo atual começa logo em seguida, tornando essa sua primeira execução.
             else:
@@ -135,7 +138,9 @@ def RR(entrada_tratada, quantum) -> list[list[float]]:
 
     def extrair_informacoes(entrada_tratada, quantum):
         # SOLUÇÃO DO PROBLEMA 3: Copiar as sublistas para não zerar os picos na lista principal
-        processos_copia = [p.copy() for p in entrada_tratada]
+        processos_copia = sorted(
+            [p.copy() for p in entrada_tratada], key=lambda p: (p[0], p[2])
+        ) #recebe a entrada ordenada em ordem de chegada
 
         dicionario_processos = {}
         tempo_percorrido = 0

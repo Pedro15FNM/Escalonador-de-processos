@@ -27,9 +27,8 @@ def main():
             entrada_tratada.append(linha_convertida)#adiciona a linha em uma lista maior
 
     # o resoltado final é uma lista de listas de flotas
-    # esas listas de floats representam os processos e tem 3 indicies: 0 é o momento de chegada, 1 é a duração, e 2 é o id
-
-    entrada_tratada.sort(key=lambda p: (p[0], p[2]))
+    # esas listas de floats representam os processos e tem 3 indicies: 
+    # 0 é o momento de chegada, 1 é a duração, e 2 é o id
 
 #==CHAMADA DAS FUNÇÕES DE ESCALONAMENTO E EXIBIÇÃO NA TELA DO RESULTADO==#
     # Chama o algoritmo e guarda o resultado
