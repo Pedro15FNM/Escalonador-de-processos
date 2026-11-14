@@ -45,5 +45,6 @@ def main():
     print(media_rr)
     print(media_fcfs)
 
+
 if __name__ == "__main__":
     main()
