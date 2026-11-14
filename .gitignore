@@ -1,0 +1,16 @@
+# Bytecode e cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes virtuais
+venv/
+.venv/
+env/
+
+# Configurações de editor (VS Code / VSCodium)
+.vscode/
+
+# Arquivos temporários e backups do sistema
+*~
+*.swp
