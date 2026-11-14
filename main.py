@@ -1,18 +1,36 @@
+import os
+import sys
 from escalonadores import FCFS, RR, SJF
 from utilitarios import Media
 
 
 def main():
 
-#==LEITURA E TRATAMENTO DA ENTRADA==#
+#==LEITURA DA ENTRADA==#
+    #Lê o arquivo de algum jeito, retorna uma lista de linhas do arquivo
+    def ler_entrada() -> list[str]:
+        # Argumento via terminal: python3 main.py arquivo.txt
+        if len(sys.argv) > 1:
+            with open(sys.argv[1], "r", encoding="utf-8") as arquivo:
+                return arquivo.read().splitlines()
+
+        # Redirecionamento via stdin: python3 main.py < arquivo.txt
+        if not sys.stdin.isatty():
+            conteudo = sys.stdin.read()
+            if conteudo.strip():
+                return conteudo.splitlines()
+
+        # Fallback para arquivo local padrão: python3 main.py
+        if os.path.exists("entrada.txt"):
+            with open("entrada.txt", "r", encoding="utf-8") as arquivo:
+                return arquivo.read().splitlines()
+
+        raise FileNotFoundError("Nenhum arquivo de entrada foi informado ou encontrado.")
+
+#==TRATAMENTO DA ENTRADA==#
     entrada_tratada = []
     contador = 0
-    
-    #abre o arquivo da entrada
-    with open("entrada.txt", "r", encoding="utf-8") as arquivo:
-        
-        #divide o arquivo em uma lista de linhas
-        entrada = arquivo.read().splitlines()
+    entrada = ler_entrada()
 
     for linha in entrada:
         if linha.strip(): #se a lista não estiver vazia aciona o contador e inicializa a linha convertida
@@ -21,7 +39,7 @@ def main():
             
             #converte a linha em uma lista de seus valores(separados por espaços)
             for valor in linha.split():
-                linha_convertida.append(float(valor))#adiciona o valor(a chegada e a duração)
+                linha_convertida.append(int(valor))#adiciona o valor(a chegada e a duração)
 
             linha_convertida.append(contador)#adiciona o id
             entrada_tratada.append(linha_convertida)#adiciona a linha em uma lista maior

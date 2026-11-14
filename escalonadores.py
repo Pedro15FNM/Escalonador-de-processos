@@ -1,4 +1,4 @@
-def FCFS(entrada_tratada: list[list[float]]):
+def FCFS(entrada_tratada: list[list[int]]):
 
     lista_pronta = []
 
@@ -73,7 +73,7 @@ def FCFS(entrada_tratada: list[list[float]]):
     return lista_pronta
 
 
-def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
+def SJF(entrada_tratada: list[list[int]]):
     lista_prontos = []
 
     def extrair_informacoes(entrada_tratada):
@@ -86,7 +86,7 @@ def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
         loop reseta
         """
         pendentes = entrada_tratada.copy()
-        tempo_percorrido = 0.0
+        tempo_percorrido = 0
         dicionario_processos = {}
 
         while pendentes:
@@ -133,7 +133,7 @@ def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
     return lista_prontos
 
 
-def RR(entrada_tratada, quantum) -> list[list[float]]:
+def RR(entrada_tratada, quantum):
     lista_prontos = []  # processos prontos para executar
 
     def extrair_informacoes(entrada_tratada, quantum):

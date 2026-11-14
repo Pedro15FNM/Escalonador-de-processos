@@ -1,7 +1,10 @@
-def Media(lista_prontos: list[list[float]]) -> list[float]:
+def Media(lista_prontos: list[list[int]]) -> list[float]:
     retorno_soma = 0
     resposta_soma = 0
     espera_soma = 0
+
+    if not lista_prontos:
+        return [0.0, 0.0, 0.0]
 
     for i in lista_prontos:
         retorno_soma += i[0]
