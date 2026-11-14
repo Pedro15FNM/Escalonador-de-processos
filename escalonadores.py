@@ -59,8 +59,6 @@ def FCFS(entrada_tratada: list[list[float]]):
             )
         return dicionario_processos
 
-    dicionario_processos = extrair_informacoes(entrada_tratada)
-
     # === CALCULAR RETORNO, RESPOSTA E ESPERA === #
     dicionario_processos = extrair_informacoes(entrada_tratada)
     for i in dicionario_processos.values():
@@ -73,57 +71,64 @@ def FCFS(entrada_tratada: list[list[float]]):
 
 
 def SJF(entrada_tratada: list[list[float]]) -> list[list[float]]:
+    lista_prontos = []
 
-    lista_prontos = []  # processos prontos para executar
-    retorno = []
-    instante = 0
-    cont = 0
+    def extrair_informacoes(entrada_tratada):
 
-    lista_novos = (
-        entrada_tratada.copy()
-    )  # processos esperando para estarem prontos de inicio são todos
+        """
+        A ideia aqui é ter uma lista de processos pendentes e disponíveis. 
+        a lista de disponíveis é atualizada a cada mudança no tempo percorrido
+        1 dos disponíveis é escolhido(seus dados são calculados e mandados para o dicionario de retorno)
+        esse 1 é removido dos pendentes
+        tempo percorrido é incrementado com a duração do processo escolhido
+        loop reseta
+        """
+        pendentes = entrada_tratada.copy()
+        tempo_percorrido = 0.0
+        dicionario_processos = {}
 
-    # simula cada instante do processamento(talvez não seja a ideia mais eficiente mas foi a que eu tive)
-    while cont > 0 or len(lista_novos) > 0 or len(lista_prontos) > 0:
-        cont -= 1
+        while pendentes:
+            #filtra os processos que estão disponíveis no momento atual
+            disponiveis = [p for p in pendentes if p[0]<=tempo_percorrido]
 
-        # pula a troca de processo se já tiver um processo em andamento
-        if cont <= 0:
-            # adiciona prontos e remove prontos dos novos
-            for w in lista_novos.copy():
-                if w[0] <= instante:
-                    lista_prontos.append(w)
-                    lista_novos.remove(w)
+            #se não tiver ninguém disponível saltamos no tempo até a chegada do próximo processo(chegada mais proxima) e recalculamos os disponíveis
+            if not disponiveis:
+                tempo_percorrido = min(p[0] for p in pendentes)
+                disponiveis = [p for p in pendentes if p[0]<=tempo_percorrido]
 
-            # se não tem ninguem pronto pula a iteração
-            if not lista_prontos:
-                instante += 1
-                continue
+            #escolhe o processo com menor duração(desempate sendo a chegada e o ID)
+            escolhido = min(disponiveis, key=lambda p: (p[1], p[0], p[2]))
 
-            shortest = [
-                0,
-                -1,
-                -1,
-            ]  # como vamos ter que escolher o shortest job temos que resetar essa variavel logo antes(colocar em outros trechos do código gera problemas, é importante que ela resete logo antes de procurar um novo)
+            #calcula a primeira execução e a conclusão do processo, também incrementa o tempo percorrido
+            primeira_execucao = tempo_percorrido
+            conclusao = tempo_percorrido + escolhido[1]
+            tempo_percorrido = conclusao
 
-            # escolhe quem é o shortest job
-            for j in lista_prontos:
-                if j[1] < shortest[1] or shortest[1] == -1:
-                    shortest = j
+            #adiciona os dados do processo no dicionário
+            dicionario_processos.update(
+                    {
+                        f"Processo {escolhido[2]}": {
+                            "chegada": escolhido[0],
+                            "pico": escolhido[1],
+                            "conclusao": conclusao,
+                            "1 execucao": primeira_execucao,
+                        }
+                    }
+                )
+            
+            pendentes.remove(escolhido)
 
-            # adiciona o job escolhido no retorno junto com o instante no qual ele foi escolhido
-            retorno.append([instante, shortest[2]])
-            lista_prontos.remove(
-                shortest
-            )  # retira ele da lista de prontos para não ser chamado novamente
-            cont = shortest[1]
+        return dicionario_processos
 
-        else:
-            retorno.append([instante, shortest[2]])
+    # === CALCULAR RETORNO, RESPOSTA E ESPERA === #
+    dicionario_processos = extrair_informacoes(entrada_tratada)
+    for i in dicionario_processos.values():
+        retorno = i["conclusao"] - i["chegada"]
+        resposta = i["1 execucao"] - i["chegada"]
+        espera = retorno - i["pico"]
+        lista_prontos.append([retorno, resposta, espera])
 
-        instante += 1
-
-    return retorno
+    return lista_prontos
 
 
 def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
