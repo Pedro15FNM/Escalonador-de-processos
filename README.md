@@ -17,8 +17,3 @@ O programa suporta três formas de leitura do arquivo de processos, na seguinte 
    python3 main.py
 
 Cada linha do arquivo deve conter dois números inteiros separados por espaço, indicando respectivamente o tempo de chegada e a duração (pico) de cada processo. Linhas em branco são ignoradas.
-
-0 20
-0 10
-4 6
-4 8
