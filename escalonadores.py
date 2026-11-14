@@ -1,47 +1,3 @@
-def main():
-
-    entrada_tratada = []
-    contador = 0
-
-    with open("entrada.txt", "r", encoding="utf-8") as arquivo:
-        entrada = arquivo.read().splitlines()
-
-    print(entrada)
-
-    for linha in entrada:
-        if linha.strip():
-            contador += 1
-            linha_convertida = []
-
-            for valor in linha.split():
-                linha_convertida.append(float(valor))
-
-            linha_convertida.append(contador)
-            entrada_tratada.append(linha_convertida)
-
-    # 0 é o momento de chegada, 1 é a duração, e 2 é o id
-
-    print("Entrada Tratada:", entrada_tratada)
-
-    # Chama o algoritmo e guarda o resultado
-    resultado_sjf = SJF(entrada_tratada)
-
-    print("")
-    # Imprime a simulação instante por instante
-    print("Simulação SJF:", resultado_sjf)
-
-    resultado_fcfs = FCFS(entrada_tratada)
-
-    resultado_rr = RR(entrada_tratada, quantum=2)
-
-    media_rr = Media(resultado_rr)
-
-    media_fcfs = Media(resultado_fcfs)
-
-    print(media_rr)
-    print(media_fcfs)
-
-
 def FCFS(entrada_tratada: list[list[float]]):
 
     lista_pronta = []
@@ -104,15 +60,15 @@ def FCFS(entrada_tratada: list[list[float]]):
         return dicionario_processos
 
     dicionario_processos = extrair_informacoes(entrada_tratada)
-    
-     # === CALCULAR RETORNO, RESPOSTA E ESPERA === #
+
+    # === CALCULAR RETORNO, RESPOSTA E ESPERA === #
     dicionario_processos = extrair_informacoes(entrada_tratada)
     for i in dicionario_processos.values():
         retorno = i["conclusao"] - i["chegada"]
         resposta = i["1 execucao"] - i["chegada"]
         espera = retorno - i["pico"]
         lista_pronta.append([retorno, resposta, espera])
-    
+
     return lista_pronta
 
 
@@ -182,12 +138,10 @@ def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
         tem_processo = True
 
         while tem_processo:
-            
             # Crio uma flag para saber se a CPU ficou ociosa (sem nenhum processo para executar) nesta rodada.
             processo_executado = False
 
             for i in entrada_tratada:
-                
                 # === CRITÉRIOS DE AVALIAÇÃO DO PROCESSO === #
                 # Se tempo de chegada do processo for maior que o tempo percorrido, logo o processo não chegou ainda. Então pule para o próximo.
                 # Se valor do tempo de pico do processo for igual a 0, então o processo já foi executado.
@@ -205,14 +159,15 @@ def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
                 # Atribuia a pico valor do pico do processo atual
                 pico = dicionario_pico_processos[i[2]]
 
-
                 # === APLICAR O QUANTUM AOS PROCESSOS === #
                 # Se já existe, resgata o valor original para não ser sobrescrito pelo de outro processo
-                if  f"Processo {i[2]}" not in dicionario_processos:
+                if f"Processo {i[2]}" not in dicionario_processos:
                     primeira_exec = tempo_percorrido
                 else:
                     # Se já existe, resgata o valor original para não ser sobrescrito pelo de outro processo
-                    primeira_exec = dicionario_processos[f"Processo {i[2]}"]["1 execucao"]
+                    primeira_exec = dicionario_processos[f"Processo {i[2]}"][
+                        "1 execucao"
+                    ]
 
                 # Verificar se o quantum é maior que o pico do processo
                 if i[1] >= quantum:
@@ -230,8 +185,6 @@ def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
 
                     # Somando o tempo percorrido mais o quantum menos o resto pelo fato de que a CPU não pode ficar em tempo ocioso,
                     tempo_percorrido += quantum - resto
-
-
 
                 # Conclusão sempre será igual a o tempo percorrido, mesmo que o processo não tenha acabado ainda. Pois, inevitavelmente, ele vai acabar, logo é o único valor que sempre é atualizado.
                 conclusao = tempo_percorrido
@@ -252,7 +205,9 @@ def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
             # Se o processo_executado for igual a false, logo a CPU ficou ociosa (sem nenhum processo), durante essa rodada.
             # Então tornamos o valor de tempo_percorrido igual a o menor valor de chegaga, para caso aja algum outro processo que também não foi executado, do processo que ainda tem o seu valor de pico maior que zero.
             if not processo_executado:
-                tempo_percorrido = min(processo[0] for processo in entrada_tratada if processo[1] > 0)
+                tempo_percorrido = min(
+                    processo[0] for processo in entrada_tratada if processo[1] > 0
+                )
 
             """
             Para veriricar se todos os processos tem o seu tempo de pico igual a zero?
@@ -275,25 +230,3 @@ def RR(entrada_tratada: list[list[float]], quantum: int) -> list[list[float]]:
         lista_prontos.append([retorno, resposta, espera])
 
     return lista_prontos
-
-def Media(lista_prontos: list[list[float]]) -> list[float]:
-    retorno_soma = 0
-    resposta_soma = 0
-    espera_soma = 0
-
-    for i in lista_prontos:
-        retorno_soma += i[0]
-        resposta_soma += i[1]
-        espera_soma += i[2]
-
-    retorno_medio = retorno_soma / len(lista_prontos)
-    resposta_medio = resposta_soma / len(lista_prontos)
-    espera_medio = espera_soma / len(lista_prontos)
-
-    lista_medias = [retorno_medio, resposta_medio, espera_medio]
-
-    return lista_medias
-
-
-if __name__ == "__main__":
-    main()
