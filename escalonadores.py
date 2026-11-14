@@ -1,3 +1,4 @@
+#GRUPO: PEDRO FRANÇA NUNES MOREIRA E LEONARDO SOUZA LEITE
 def FCFS(entrada_tratada: list[list[int]]):
 
     lista_pronta = []
@@ -134,22 +135,22 @@ def SJF(entrada_tratada: list[list[int]]):
 
 
 def RR(entrada_tratada, quantum):
-    lista_prontos = []  # processos prontos para executar
+    lista_prontos = [] 
 
     def extrair_informacoes(entrada_tratada, quantum):
-        # SOLUÇÃO DO PROBLEMA 3: Copiar as sublistas para não zerar os picos na lista principal
+        # Copiar as sublistas para não zerar os picos na lista principal
         processos_copia = sorted(
             [p.copy() for p in entrada_tratada], key=lambda p: (p[0], p[2])
-        ) #recebe a entrada ordenada em ordem de chegada
+        ) #ordena a entrada ordenada em ordem de chegada
 
         dicionario_processos = {}
         tempo_percorrido = 0
         primeira_exec = 0
         conclusao = 0
 
-        dicionario_chegada_processos = {}  # Foi a forma que encontrei para guardar os processos que já foram executados...
+        dicionario_chegada_processos = {}  
 
-        # SOLUÇÃO DO PROBLEMA 2: Fila para gerenciar quem chegou primeiro
+        # Fila para gerenciar quem chegou primeiro
         fila = []
 
         tem_processo = True
@@ -171,7 +172,6 @@ def RR(entrada_tratada, quantum):
             i = fila.pop(0)
 
             # === CRITÉRIOS DE AVALIAÇÃO DO PROCESSO === #
-            # (Removi os "continues" antigos pois a fila já garante que o processo chegou e tem pico)
 
             # === SALVAR PICO DO PROCESSO ANTES DE EXECUTA-LO ===
             # Se o processo ainda não passou pelo hardware, então adicione ele a lista de processos passados
@@ -211,7 +211,6 @@ def RR(entrada_tratada, quantum):
                 fila.append(i)
 
             # === ATUALIZAR O DICIONÁRIO DE PROCESSOS === #
-            # Adicionar ao dicionário de processos as informações do processo atual atualizado.
             dicionario_processos.update(
                 {
                     f"Processo {i[2]}": {

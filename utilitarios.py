@@ -1,3 +1,4 @@
+#GRUPO: PEDRO FRANÇA NUNES MOREIRA E LEONARDO SOUZA LEITE
 def Media(lista_prontos: list[list[int]]) -> list[float]:
     retorno_soma = 0
     resposta_soma = 0

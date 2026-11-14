@@ -1,3 +1,4 @@
+#GRUPO: PEDRO FRANÇA NUNES MOREIRA E LEONARDO SOUZA LEITE
 import os
 import sys
 from escalonadores import FCFS, RR, SJF
@@ -7,7 +8,7 @@ from utilitarios import Media
 def main():
 
 #==LEITURA DA ENTRADA==#
-    #Lê o arquivo de algum jeito, retorna uma lista de linhas do arquivo
+    #Lê o arquivo e retorna uma lista de linhas do arquivo
     def ler_entrada() -> list[str]:
         # Argumento via terminal: python3 main.py arquivo.txt
         if len(sys.argv) > 1:
@@ -30,26 +31,26 @@ def main():
 #==TRATAMENTO DA ENTRADA==#
     entrada_tratada = []
     contador = 0
+
     entrada = ler_entrada()
 
     for linha in entrada:
         if linha.strip(): #se a lista não estiver vazia aciona o contador e inicializa a linha convertida
             contador += 1
-            linha_convertida = []# vai representar um processo indices: 0 é o momento de chegada, 1 é a duração, e 2 é o id
+            linha_convertida = []
             
-            #converte a linha em uma lista de seus valores(separados por espaços)
+            #adiciona os valores na linha convertida
             for valor in linha.split():
-                linha_convertida.append(int(valor))#adiciona o valor(a chegada e a duração)
+                linha_convertida.append(int(valor))
 
             linha_convertida.append(contador)#adiciona o id
             entrada_tratada.append(linha_convertida)#adiciona a linha em uma lista maior
 
-    # o resoltado final é uma lista de listas de flotas
-    # esas listas de floats representam os processos e tem 3 indicies: 
+    # o resoltado final é uma lista de listas de inteiros
+    # esas listas de inteiros representam os processos e tem 3 indicies: 
     # 0 é o momento de chegada, 1 é a duração, e 2 é o id
 
 #==CHAMADA DAS FUNÇÕES DE ESCALONAMENTO E EXIBIÇÃO NA TELA DO RESULTADO==#
-    # Chama o algoritmo e guarda o resultado
     resultado_sjf = SJF(entrada_tratada)
     resultado_fcfs = FCFS(entrada_tratada)
     resultado_rr = RR(entrada_tratada, quantum=2)
